@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBC Game Player Interface</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>KBC Game</h1>
+    <form id="answerForm">
+        <label for="name">Enter your name:</label>
+        <input type="text" id="name" required>
+        <br><br>
+        <label for="answer">Your answer:</label>
+        <input type="text" id="answer" required>
+        <br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="feedback"></div>
+
+    <script>
+        const socket = io();
+
+        document.getElementById('answerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const playerName = document.getElementById('name').value;
+            const answer = document.getElementById('answer').value;
+
+            // Send the answer to the server
+            socket.emit('submitAnswer', { playerName, answer });
+
+            document.getElementById('answer').value = ''; // Clear input field
+        });
+        // Show wrong answer feedback
+        socket.on('wrongAnswer', (message) => {
+            document.getElementById('feedback').innerText = message;
+        });
+    </script>
+</body>
+</html>
+

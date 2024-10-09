@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KBC Game Central Display</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>KBC Game</h1>
+    <div id="questionArea">
+        <h2 id="question">Waiting for the question...</h2>
+        <img id="qrCode" src="https://api.qrserver.com/v1/create-qr-code/?data=http://localhost:3000/participate&size=200x200" alt="QR Code for Players">
+    </div>
+    <div id="messageArea"></div>
+
+    <script>
+        const socket = io();
+
+        // Listen for new questions
+        socket.on('question', (question) => {
+            document.getElementById('question').innerText = question;
+            document.getElementById('messageArea').innerText = '';
+        });
+        // Show correct answer message
+        socket.on('correctAnswer', ({ playerName }) => {document.getElementById('messageArea').innerText = Congratulations ${playerName}, 
+        you got it right!;});
+
+        // End the game
+        socket.on('gameOver', (message) => {
+            document.getElementById('questionArea').innerText = message;
+            document.getElementById('qrCode').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
